@@ -1,0 +1,37 @@
+defaults:
+  - hydra/launcher: submitit
+  # - hydra/launcher: fairtask
+
+hydra:
+  name: regression
+  run:
+    dir: ./${hydra.name}/${model.tag}.${seed}
+  sweep:
+    dir: ${hydra.name}
+    subdir: ${model.tag}.${seed}
+
+model: ${gd}
+n_update: 100000
+n_inner_update: 1
+seed: 0
+n_hidden: 128
+n_samples: 100
+clip_norm: True
+
+gd:
+  class: regression.UnrollEnergyGD
+  tag: gd
+  params:
+    n_inner_iter: 10
+    inner_lr: 1e-1
+
+dcem:
+  class: regression.UnrollEnergyCEM
+  tag: dcem
+  params:
+    n_sample: 100
+    n_elite: 10
+    n_iter: 10
+    init_sigma: 7.
+    temp: 1.
+    normalize: True
