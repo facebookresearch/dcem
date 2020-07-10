@@ -13,5 +13,8 @@ setup(
     install_requires=[
         'numpy>=1<2',
         'lml@git+git://github.com/locuslab/lml.git',
+    ],
+    dependency_links=[
+        'git+ssh://git@github.com/locuslab/lml.git#egg=lml-0.0.1'
     ]
 )
