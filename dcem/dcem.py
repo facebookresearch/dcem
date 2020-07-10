@@ -16,7 +16,7 @@ def dcem(
     n_sample=20,
     n_elite=10,
     n_iter=10,
-    temp=100.,
+    temp=1.,
     lb=None,
     ub=None,
     init_mu=None,
