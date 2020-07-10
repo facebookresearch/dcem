@@ -1,9 +1,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 
 import torch
-
-import sys
-sys.path.append('..')
 from dcem import dcem
 
 def dcem_ctrl(
