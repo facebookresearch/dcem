@@ -26,7 +26,7 @@ def dcem(
     proj_iterate_cb=None,
     lml_verbose=0,
     lml_eps=1e-3,
-    normalize=False,
+    normalize=True,
     iter_eps=1e-4,
 ):
     if init_mu is None:

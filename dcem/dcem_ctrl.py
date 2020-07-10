@@ -6,7 +6,7 @@ import sys
 sys.path.append('..')
 from dcem import dcem
 
-def ctrl(
+def dcem_ctrl(
     obs,
     plan_horizon,
     init_mu,
