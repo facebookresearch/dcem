@@ -42,7 +42,7 @@ import hydra
 
 from dcem import dcem
 from ctrl import ctrl
-from env_dx.cartpole import CartpoleDx
+from mpc.env_dx.cartpole import CartpoleDx
 
 import util
 

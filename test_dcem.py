@@ -13,6 +13,7 @@ sys.excepthook = ultratb.FormattedTB(mode='Verbose',
 def bmv(X, y):
     return X.bmm(y.unsqueeze(2)).squeeze(2)
 
+
 def test_dcem():
     n_batch = 2
     n_sample = 100
