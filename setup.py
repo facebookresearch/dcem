@@ -12,5 +12,6 @@ setup(
     py_modules=['dcem'],
     install_requires=[
         'numpy>=1<2',
+        'lml@git+git://github.com/locuslab/lml.git',
     ]
 )
