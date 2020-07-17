@@ -79,8 +79,12 @@ dcem_ctrl(
 [examples.ipynb](https://github.com/facebookresearch/dcem/blob/main/examples.ipynb)
 provides a light introduction for using our interface for
 simple optimization and control problems.
+We show how to use DCEM to update a parameterized objective:
 
 ![](./fig/learning.gif)
+
+And how to use CEM to solve a pendulum control problem:
+
 ![](./fig/pendulum.gif)
 
 # Reproducing our experiments
