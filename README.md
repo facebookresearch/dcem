@@ -11,12 +11,14 @@ Our code provides an implementation of the vanilla
 [cross-entropy method](http://web.mit.edu/6.454/www/www_fall_2003/gew/CEtutorial.pdf)
 for optimization and our differentiable extension.
 
+![](./fig/dcem.png)
+
 # Setup
 
 Once you have PyTorch setup, you can install our core code as
 a package with pip:
 
-```
+```bash
 pip install git+git://github.com/facebookresearch/dcem.git
 ```
 
@@ -78,9 +80,12 @@ dcem_ctrl(
 provides a light introduction for using our interface for
 simple optimization and control problems.
 
-![](learning.gif)
-![](pendulum.gif)
+![](./fig/learning.gif)
+![](./fig/pendulum.gif)
 
+# Reproducing our regression and cartpole experiments
+[cartpole_emb.py](https://github.com/facebookresearch/dcem/blob/main/exps/cartpole_emb.py)
+[regression.py](https://github.com/facebookresearch/dcem/blob/main/exps/regression.py)
 
 # Citations
 If you find this repository helpful in your publications,
