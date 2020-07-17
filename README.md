@@ -83,9 +83,14 @@ simple optimization and control problems.
 ![](./fig/learning.gif)
 ![](./fig/pendulum.gif)
 
-# Reproducing our regression and cartpole experiments
-[cartpole_emb.py](https://github.com/facebookresearch/dcem/blob/main/exps/cartpole_emb.py)
+# Reproducing our experiments
+We provide the source code for our cartpole and regression experiments
+in the [exps](https://github.com/facebookresearch/dcem/tree/main/exps)
+directory.
+For 1D regression in
 [regression.py](https://github.com/facebookresearch/dcem/blob/main/exps/regression.py)
+and the cartpole embedding in
+[cartpole_emb.py](https://github.com/facebookresearch/dcem/blob/main/exps/cartpole_emb.py).
 
 # Citations
 If you find this repository helpful in your publications,
