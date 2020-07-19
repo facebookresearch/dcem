@@ -1,2 +1,4 @@
 dist
 .ipynb_checkpoints
+exps/regression/
+exps/cartpole_emb/

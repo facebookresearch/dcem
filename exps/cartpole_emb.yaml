@@ -1,6 +1,3 @@
-defaults:
-  - hydra/launcher: submitit
-
 hydra:
   name: ${method.tag}
   run:
@@ -8,42 +5,13 @@ hydra:
   sweep:
     dir: cartpole_emb/2019.09.09-v5
     subdir: ${hydra.job.override_dirname}
-  launcher:
-    class: hydra_plugins.fairtask.FAIRTaskLauncher
-    params:
-      # debug launching issues, set to true to run workers in the same process.
-      no_workers: false
-      queue: slurm
-      queues:
-        local:
-          class: fairtask.local.LocalQueueConfig
-          params:
-            num_workers: 2
-        slurm:
-          class: fairtask_slurm.slurm.SLURMQueueConfig
-          params:
-            num_jobs: ${hydra.job.num_jobs}
-            num_nodes_per_job: 1
-            num_workers_per_node: 1
-            name: ${run}
-            maxtime_mins: 4320
-            # partition: priority
-            # comment: For ICLR rebuttal
-            partition: learnfair
-            # partition: scavenge
-            cpus_per_worker: 10
-            mem_gb_per_worker: 64
-            gres: 'gpu:1'
-            log_directory: ${hydra.sweep.dir}/.slurm
-            output: slurm-%j.out
-            error: slurm-%j.err
 
 
 plan_horizon: 20
 n_train_iter: 100000
 n_batch: 1
 save_interval: 100
-device: 'cuda'
+device: 'cpu'
 seed: 0
 
 method: ${dcem}

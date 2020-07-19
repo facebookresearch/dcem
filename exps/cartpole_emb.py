@@ -18,7 +18,6 @@ import sys
 import random
 import pickle as pkl
 import time
-import dmc2gym
 import copy
 
 import itertools
@@ -40,11 +39,8 @@ log = logging.getLogger(__name__)
 import higher
 import hydra
 
-from dcem import dcem
-from ctrl import ctrl
 from mpc.env_dx.cartpole import CartpoleDx
-
-import util
+from dcem import dcem, dcem_ctrl
 
 # import sys
 # from IPython.core import ultratb
@@ -86,8 +82,6 @@ class CartpoleEmbExp():
 
         torch.manual_seed(0)
         self.xinit_val = sample_init(n_batch=100).to(self.device)
-        # self.xinit_val_full_cost = self.solve_full(self.xinit_val)['cost'].mean()
-        # print(self.xinit_val_full_cost.mean())
 
 
     def dump(self, tag='latest'):
@@ -119,6 +113,7 @@ class CartpoleEmbExp():
         kwargs['init_sigma'] = kwargs['init_sigma_scale']*(self.dx.upper-self.dx.lower)
         del kwargs['init_sigma_scale']
 
+        assert False, "TODO: Update to new dcem_ctrl interface"
         out = ctrl(
             xinits, plan_horizon=self.cfg.plan_horizon, init_mu=0.,
             lb=self.dx.lower, ub=self.dx.upper,
@@ -353,86 +348,6 @@ class GD():
         return loss.item()
 
 
-class AE():
-    def __init__(
-        self, latent_size, n_hidden, lr, n_ctrl, dx, plan_horizon,
-        ctrl_opts, device, solve_full,
-    ):
-        self.latent_size = latent_size
-        self.n_hidden = n_hidden
-        self.lr = lr
-        self.n_ctrl = n_ctrl
-        self.dx = dx
-        self.plan_horizon = plan_horizon
-        self.device = device
-        self.ctrl_opts = ctrl_opts
-        self.solve_full = solve_full
-
-        self.decode = Decode(
-            latent_size, n_hidden,
-            plan_horizon, n_ctrl, dx.lower, dx.upper
-        ).to(self.device)
-        self.encode = Encode(
-            latent_size, n_hidden,
-            plan_horizon, n_ctrl, dx.lower, dx.upper
-        ).to(self.device)
-        params = get_params(self.decode, self.encode)
-        self.opt = optim.Adam(params, lr=lr)
-
-
-    def get_cost_f(self, xinit):
-        assert xinit.ndimension() == 2
-        nbatch = xinit.size(0)
-
-        def f_emb(u_emb):
-            u = self.decode(u_emb.view(-1, self.latent_size))
-            nsample = u.size(1)//nbatch
-            xinit_sample = xinit.unsqueeze(1).repeat(1, nsample, 1)
-            xinit_sample = xinit_sample.view(nbatch*nsample, -1)
-            cost = -rew_nominal(self.dx, xinit_sample, u)[0]
-            return cost
-        return f_emb
-
-
-    def solve(self, xinit, iter_cb=None):
-        if xinit.ndimension() == 1:
-            xinit = xinit.unsqueeze(0)
-        assert xinit.ndimension() == 2
-        nbatch = xinit.size(0)
-
-        if iter_cb is None:
-            def iter_cb(i, X, fX, I, X_I, mu, sigma):
-                assert fX.ndimension() == 2
-                I = I.view(fX.shape)
-                print(f'  + {i}: {(fX*I).sum()/I.sum():.2f}')
-                print(f'    + {I.min().item():.2f}/{I.max().item():.2f}')
-
-        # torch.manual_seed(0)
-        f_emb = self.get_cost_f(xinit)
-        u_emb = dcem(
-            f_emb, self.latent_size, init_mu=None,
-            n_batch=nbatch, device=self.device, iter_cb=iter_cb,
-            **self.ctrl_opts
-        )
-        emb_cost = f_emb(u_emb)
-        return u_emb, emb_cost
-
-
-    def train_step(self, xinit):
-        xinit = xinit.squeeze()
-        u_star = self.solve_full(xinit)['u_nominal']
-        z = self.encode(u_star)
-        u_hat = self.decode(z)
-        loss = (1e-2*(u_star - u_hat)).pow(2).mean() #+ 0.5*z.pow(2).mean()
-
-        self.opt.zero_grad()
-        loss.backward()
-        # nn.utils.clip_grad_norm_(self.decode.parameters(), 1.0)
-        self.opt.step()
-
-        return loss.item()
-
-
 class Decode(nn.Module):
     def __init__(self, n_in, n_hidden, plan_horizon, n_ctrl, lb, ub):
         super().__init__()
@@ -472,39 +387,10 @@ class Decode(nn.Module):
         return u
 
 
-class Encode(nn.Module):
-    def __init__(self, n_latent, n_hidden, plan_horizon, n_ctrl, lb, ub):
-        super().__init__()
-        self.plan_horizon = plan_horizon
-        self.n_ctrl = n_ctrl
-        self.lb = lb
-        self.ub = ub
-
-        assert False, "Update activations/init if used"
-        self.net = nn.Sequential(
-            nn.Linear(plan_horizon*n_ctrl, n_hidden, bias=True),
-            nn.Softplus(),
-            nn.Linear(n_hidden, n_hidden, bias=True),
-            nn.Softplus(),
-            nn.Linear(n_hidden, n_hidden, bias=True),
-            nn.Softplus(),
-            nn.Linear(n_hidden, n_latent, bias=True),
-        )
-
-    def forward(self, u):
-        if u.ndimension() == 2:
-            u = u.unsqueeze(1)
-        assert u.ndimension() == 3
-        T, nbatch, n_ctrl = u.size()
-        assert n_ctrl == self.n_ctrl
-        assert T == self.plan_horizon
-        z = self.net(u.transpose(0,1).view(nbatch, -1))
-        return z
-
-
 def uniform(shape, low, high):
     r = high-low
     return torch.rand(shape)*r+low
+
 
 def sample_init(n_batch=1):
     pos = uniform(n_batch, -0.5, 0.5)
@@ -513,6 +399,7 @@ def sample_init(n_batch=1):
     dth = uniform(n_batch, -1., 1.)
     xinit = torch.stack((pos, dpos, torch.cos(th), torch.sin(th), dth), dim=1)
     return xinit
+
 
 def plot(fname, title=None):
     x = np.linspace(-1.0, 1.0, 20)
@@ -535,6 +422,7 @@ def plot(fname, title=None):
 
     fig.tight_layout()
     fig.savefig(fname)
+
 
 if __name__ == '__main__':
     main()

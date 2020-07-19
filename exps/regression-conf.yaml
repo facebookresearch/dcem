@@ -1,7 +1,3 @@
-defaults:
-  - hydra/launcher: submitit
-  # - hydra/launcher: fairtask
-
 hydra:
   name: regression
   run:
@@ -10,9 +6,9 @@ hydra:
     dir: ${hydra.name}
     subdir: ${model.tag}.${seed}
 
-model: ${gd}
+model: ${dcem}
 n_update: 100000
-n_inner_update: 1
+n_inner_update: 3
 seed: 0
 n_hidden: 128
 n_samples: 100

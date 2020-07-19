@@ -55,7 +55,8 @@ class RegressionExp():
         torch.manual_seed(cfg.seed)
         npr.seed(cfg.seed)
 
-        self.device = torch.device("cuda")
+        self.device = torch.device("cuda") \
+            if torch.cuda.is_available() else torch.device("cpu")
         self.Enet = EnergyNet(n_in=1, n_out=1, n_hidden=cfg.n_hidden).to(self.device)
         self.model = hydra.utils.instantiate(cfg.model, self.Enet)
         self.load_data()
@@ -109,7 +110,7 @@ class RegressionExp():
                 y_preds = self.model(self.x_train.view(-1, 1)).squeeze()
                 loss = F.mse_loss(input=y_preds, target=self.y_train)
                 lr_sched.step(loss)
-                print(f'{step}: {loss:.2f}')
+                print(f'Iteration {step}: Loss {loss:.2f}')
                 writer.writerow({
                     'iter': step,
                     'loss': loss.item(),
@@ -170,7 +171,8 @@ class UnrollEnergyGD(nn.Module):
 
 
 class UnrollEnergyCEM(nn.Module):
-    def __init__(self, Enet: EnergyNet, n_sample, n_elite, n_iter, init_sigma, temp, normalize):
+    def __init__(self, Enet: EnergyNet, n_sample, n_elite,
+                 n_iter, init_sigma, temp, normalize):
         super().__init__()
         self.Enet = Enet
         self.n_sample = n_sample
@@ -194,11 +196,16 @@ class UnrollEnergyCEM(nn.Module):
             return Es
 
         yhat = dcem(
-            # f, n_batch=nbatch, nx = 1, n_sample = 20, n_elite = 5, n_iter = 10,
-            f, n_batch=nbatch, nx = 1, n_sample = self.n_sample, n_elite = self.n_elite,
-            n_iter = self.n_iter, init_sigma=self.init_sigma, temp = self.temp,
-            device=x.device, normalize=self.temp,
-            #, lb = -1., ub = 1.,
+            f,
+            n_batch=nbatch,
+            nx=1,
+            n_sample=self.n_sample,
+            n_elite=self.n_elite,
+            n_iter=self.n_iter,
+            init_sigma=self.init_sigma,
+            temp=self.temp,
+            device=x.device,
+            normalize=self.temp,
         )
 
         return yhat
