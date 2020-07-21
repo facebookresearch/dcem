@@ -99,6 +99,8 @@ dcem_ctrl(
 provides a light introduction for using our interface for
 simple optimization and control problems.
 
+### 2d optimization
+
 We first show how to use DCEM to
 optimize a 2-dimensional objective:
 
@@ -110,7 +112,9 @@ desired location:
 
 ![](./fig/learning.gif)
 
-And we show how to use CEM to solve a pendulum control problem,
+### Pendulum control
+
+We show how to use CEM to solve a pendulum control problem,
 which can be made differentiable by setting a non-zero temperature
 for the soft top-k operation.
 
