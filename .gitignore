@@ -2,3 +2,15 @@ dist
 .ipynb_checkpoints
 exps/regression/
 exps/cartpole_emb/
+
+*.pdf
+*.out
+*.log
+*.blg
+*.bbl
+*.aux
+*.gz
+*.fls
+*.fdb_latexmk
+
+!paper/images/**

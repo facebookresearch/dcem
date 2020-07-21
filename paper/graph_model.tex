@@ -1,0 +1,76 @@
+\tikzset{>=latex}
+\begin{tikzpicture}[
+deterministic_variable/.style={rectangle, draw=black, fill=white, thin, minimum width=20pt, minimum height=20pt},
+invisible_variable/.style={rectangle, draw=white, fill=white, thin, minimum width=20pt, minimum height=20pt},
+stochastic_variable/.style={circle, draw=black, fill=white,  minimum size=20pt},
+observable_variable/.style={circle, draw=black, fill=gray!25,  minimum size=20pt},
+]
+
+% latent z
+\node[stochastic_variable] (z) {$z$};
+
+
+% determistic nodes h
+\node[deterministic_variable, below left =60pt and 50pt of z.south] (h_1) {$h_1$};
+\node[deterministic_variable, below left =60pt and 10pt of z.south] (h_2) {$h_2$};
+\node[deterministic_variable, below right=60pt and 10pt of z.south] (h_3) {$h_3$};
+\node[invisible_variable,     below right=60pt and 50pt of z.south] (h_4) {$\cdot\cdot\cdot$};
+
+
+% control u
+\node[stochastic_variable, above=20pt of h_1.north] (u_1) {$u_1$};
+\node[stochastic_variable, above=20pt of h_2.north] (u_2) {$u_2$};
+\node[stochastic_variable, above=20pt of h_3.north] (u_3) {$u_3$};
+\node[invisible_variable,  above=20pt of h_4.north] (u_4) {};
+
+
+% state x
+\node[observable_variable, below=20pt of h_1.south] (x_1) {$x_1$};
+\node[observable_variable, below=20pt of h_2.south] (x_2) {$x_2$};
+\node[observable_variable, below=20pt of h_3.south] (x_3) {$x_3$};
+
+
+% reward r
+\node[observable_variable, below=60pt of h_1.south] (r_1) {$r_1$};
+\node[observable_variable, below=60pt of h_2.south] (r_2) {$r_2$};
+\node[observable_variable, below=60pt of h_3.south] (r_3) {$r_3$};
+
+% arrows z -> u
+\draw[->] (z.south) -- (u_1.north);
+\draw[->] (z.south) -- (u_2.north);
+\draw[->] (z.south) -- (u_3.north);
+\draw[->] (z.south) -- (u_4.north);
+
+
+% arrows u -> h
+\draw[->] (u_1.south) -- (h_2.north);
+\draw[->] (u_2.south) -- (h_3.north);
+\draw[->] (u_3.south) -- (h_4.north);
+
+% arrows h -> h
+\draw[->] (h_1.east) -- (h_2.west);
+\draw[->] (h_2.east) -- (h_3.west);
+\draw[->] (h_3.east) -- (h_4.west);
+
+% arrows h -> x
+\draw[->] (h_1.south) -- (x_1.north);
+\draw[->] (h_2.south) -- (x_2.north);
+\draw[->] (h_3.south) -- (x_3.north);
+
+% arrows h -> r
+\path[->] (h_1.south east) edge [out=300, in=60] (r_1.north east);
+\path[->] (h_2.south east) edge [out=300, in=60] (r_2.north east);
+\path[->] (h_3.south east) edge [out=300, in=60] (r_3.north east);
+
+% arrows x -> h
+\draw[->] (x_1.north east) -- (h_2.south west);
+\draw[->] (x_2.north east) -- (h_3.south west);
+\draw[->] (x_3.north east) -- (h_4.south west);
+
+% arrows x -> r
+\draw[->] (x_1.south) -- (r_1.north);
+\draw[->] (x_2.south) -- (r_2.north);
+\draw[->] (x_3.south) -- (r_3.north);
+
+
+\end{tikzpicture}
