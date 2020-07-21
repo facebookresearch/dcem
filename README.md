@@ -70,7 +70,7 @@ dcem(
     n_sample, # Number of samples CEM uses in each iteration
     n_elite, # Number of elite CEM candidates in each iteration
     n_iter, # Number of CEM iterations
-    temp=1.0, # DCEM temperature parameter, set to None for vanilla CEM
+    temp, # DCEM temperature parameter, set to None for vanilla CEM
     iter_cb, # Iteration callback
 )
 ```
@@ -88,7 +88,7 @@ dcem_ctrl(
     n_ctrl, # Number of control dimensions
     lb, # Lower-bound of the control signal
     ub, # Upper-bound of the control signal
-    temp=1.0, # DCEM temperature parameter, set to None for vanilla CEM
+    temp, # DCEM temperature parameter, set to None for vanilla CEM
     rollout_cost, # Function that returns the cost of rollout out a control sequence
     iter_cb, # CEM iteration callback
 )
