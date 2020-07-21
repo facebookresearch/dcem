@@ -7,6 +7,8 @@ and
 and contains the PyTorch library and source code to reproduce the
 experiments in our ICML 2020 paper on
 [The Differentiable Cross-Entropy Method](https://arxiv.org/abs/1909.12830).
+This repository depends on the
+[Limited Multi-Label Projection Layer](https://github.com/locuslab/lml).
 Our code provides an implementation of the vanilla
 [cross-entropy method](http://web.mit.edu/6.454/www/www_fall_2003/gew/CEtutorial.pdf)
 for optimization and our differentiable extension.
