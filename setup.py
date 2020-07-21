@@ -1,3 +1,5 @@
+# Copyright (c) Facebook, Inc. and its affiliates.
+
 from setuptools import find_packages, setup
 
 setup(
