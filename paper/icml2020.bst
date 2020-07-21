@@ -1,3 +1,4 @@
+% Copyright (c) Facebook, Inc. and its affiliates.
 %% File: `icml2020.bst'
 %% A modification of `plainnl.bst' for use with natbib package 
 %%
