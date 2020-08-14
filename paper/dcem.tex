@@ -204,16 +204,12 @@ control optimization process significantly less
 computationally and memory expensive.
 This controller induces a \emph{differentiable policy class}
 parameterized by the model-based components.
-
-DCEM enables \emph{task-based model learning} \citep{donti2017task}
-and is a solution to the
+DCEM is a solution to the
 \emph{objective mismatch problem}
-in model-based reinforcement learning and control \citep{lambert2020objective},
+in model-based control \citep{lambert2020objective},
 which is the issue that arises when training model-based components with
 the objective of maximizing the data likelihood but then using the
-model-based components for the objective of control ---
-there is not necessarily a correlation between the optimal maximum
-likelihood solutions and the optimal solutions for controlling the system.
+model-based components for the objective of control.
 We use PPO \citep{schulman2017proximal} to
 \emph{fine-tune} the model-based components, demonstrating that it \emph{is}
 possible to use standard policy learning for model-based RL components in
